@@ -4,6 +4,9 @@ import requests as rq
 import csv
 from bs4 import BeautifulSoup as bs
 
+URL = "https://www.imdb.com/chart/top/?ref_=nv_mv_250"
+CSV_HEADERS = ['Title', 'IMDb Rating', 'Year', 'Length', 'Content Rating']
+USER_AGENT = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
 
 def extract_film_data(my_film):
     #get title
@@ -19,18 +22,15 @@ def extract_film_data(my_film):
     results = [title, rating, elements[0].text, elements[1].text, elements[2].text]
     return results
 
-def main():
+if __name__ == "__main__":
     #set up csv file for editing
     file = open('export_data_film.csv', 'w', newline='')
     writer = csv.writer(file)
-    csvheaders = ['Title', 'IMDb Rating', 'Year', 'Length', 'Content Rating']
-    writer.writerow(csvheaders)
+    writer.writerow(CSV_HEADERS)
     
     #set up request for html
-    my_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"}
-    URL = "https://www.imdb.com/chart/top/?ref_=nv_mv_250"
     session = rq.Session()
-    page = session.get(URL, headers=my_headers)
+    page = session.get(URL, headers=USER_AGENT)
     soup = bs(page.content, "html.parser")
     
     #grab all film data
@@ -42,6 +42,4 @@ def main():
             print(datum)
         print()
     file.close()
-    
-main()
 
